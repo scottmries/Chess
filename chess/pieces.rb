@@ -25,41 +25,44 @@ class Piece
     [-2,-1]
   ]
 
-  attr_reader :color, :board
+  attr_reader :color, :board, :position
 
-  def initialize(color, board)
+  def initialize(color, board, position)
     @board = board
     @color = color
-    @position = nil
+    @position = position
   end
 
   def moves
     []
   end
 
-  def position
-    return @position if !@position.nil? && board[@position] == self
-
-    board.grid.each_with_index do |row, i|
-      row.each_with_index do |piece, j|
-        return @position = [i,j] if piece == self
-      end
-    end
-
-    nil
-  end
+  # def position
+  #   # return @position if @position && board[@position] == self
+  #   #
+  #   # board.grid.each_with_index do |row, i|
+  #   #   row.each_with_index do |piece, j|
+  #   #     return @position = [i,j] if piece == self
+  #   #   end
+  #   # end
+  #   #
+  #   # nil
+  # end
 
   def in_bounds?(pos)
     pos.all? { |coord| (0..7).include?(coord) }
   end
 
   def vec_add(position, relative_position)
-    position.each_index { |i| position[i] += relative_position[i] }
+    pairs= position.zip(relative_position)
+    pairs.map{|pair| pair[0] + pair[1]}
   end
 
   def opponent_color
     (self.color == :white) ? :black : :white
   end
+
+  attr_writer :position
 
 end
 
@@ -105,7 +108,7 @@ end
 
 class Pawn < Piece
 
-  def initialize(board, color)
+  def initialize(board, color, position)
     super
     @has_moved = false
   end
@@ -134,7 +137,7 @@ end
 
 class Rook < SlidingPiece
 
-  def initialize(board, color)
+  def initialize(board, color, position)
     super
     @directions = Piece::NONDIAGONALS
   end
@@ -142,7 +145,7 @@ end
 
 class Knight < JumpingPiece
 
-  def initialize(board, color)
+  def initialize(board, color, position)
     super
     @rel_moves = Piece::KNIGHTS
   end
@@ -151,7 +154,7 @@ end
 
 class Bishop < SlidingPiece
 
-  def initialize(board, color)
+  def initialize(board, color, position)
     super
     @directions = Piece::DIAGONALS
   end
@@ -161,7 +164,7 @@ end
 
 class Queen < SlidingPiece
 
-  def initialize(board, color)
+  def initialize(board, color, position)
     super
     @directions = Piece::DIAGONALS + Piece::NONDIAGONALS
   end
@@ -169,7 +172,7 @@ end
 
 class King < JumpingPiece
 
-  def initialize(board, color)
+  def initialize(board, color, position)
     super
     @rel_moves = Piece::DIAGONALS + Piece::NONDIAGONALS
   end
