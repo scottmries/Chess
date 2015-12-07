@@ -37,18 +37,6 @@ class Piece
     []
   end
 
-  # def position
-  #   # return @position if @position && board[@position] == self
-  #   #
-  #   # board.grid.each_with_index do |row, i|
-  #   #   row.each_with_index do |piece, j|
-  #   #     return @position = [i,j] if piece == self
-  #   #   end
-  #   # end
-  #   #
-  #   # nil
-  # end
-
   def in_bounds?(pos)
     pos.all? { |coord| (0..7).include?(coord) }
   end
