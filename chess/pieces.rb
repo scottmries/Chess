@@ -59,8 +59,12 @@ class Piece
     unless valid_moves.include?(destination)
       raise InvalidMoveError
     end
-    self.board[position], self.board[destination] = nil, self
+    self.board[position] = nil
+    self.board[destination] = self
+    self.position = destination
   end
+
+  private
 
   attr_writer :position
 
@@ -131,6 +135,11 @@ class Pawn < Piece
     captures = captures.select{|capture| in_bounds?(capture) && board.piece_color(capture) == opponent_color}
     moves = moves.select{|move| in_bounds?(move) && board[move].nil?}
     captures + moves
+  end
+
+  def move_to(destination)
+    super
+    @has_moved = true
   end
 
 end

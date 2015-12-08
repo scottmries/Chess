@@ -29,13 +29,15 @@ class Interface
   }
 
   attr_reader :board, :cursor_position
+  attr_accessor :moving_piece
 
   def initialize(board)
     @board = board
     @cursor_position = [6, 5]
+    @moving_piece = nil
   end
 
-  def display
+  def display(player_color)
 
     display_grid = []
 
@@ -43,20 +45,33 @@ class Interface
       display_grid << Array.new
       row.each_with_index do |piece, col_idx|
         piece_symbol = PIECES_SYMBOLS[piece.class]
+        piece_symbol = PIECES_SYMBOLS[NilClass] if piece == moving_piece
         background_color = (idx + col_idx) % 2 == 0 ? :white : :black
-        background_color = :select if [idx, col_idx] == cursor_position
-        background_color = SQUARE_COLOR[background_color]
         piece_color = piece ? PIECE_COLORS[piece.color] : :white
+          if [idx, col_idx] == cursor_position
+            background_color = :select
+            piece_symbol = PIECES_SYMBOLS[moving_piece.class] if moving_piece
+            piece_color = moving_piece ? PIECE_COLORS[moving_piece.color] : piece_color
+          end
+        background_color = SQUARE_COLOR[background_color]
+
         display_grid[idx] << piece_symbol.colorize(:color => piece_color, :background => background_color)
       end
       display_grid[idx] = display_grid[idx].join
     end
     system("clear")
     puts display_grid
+    puts "#{player_color.to_s.capitalize} to move."
   end
 
-  def get_new_position
-    display until new_pos = get_input
+  def get_new_position(player_color)
+    new_pos = nil
+    until new_pos
+      display(player_color)
+      new_pos = get_input
+    end
+
+    self.moving_piece = board[new_pos]
 
     new_pos
   end
@@ -66,14 +81,19 @@ class Interface
     @cursor_position = new_pos
   end
 
-  def get_move
+  def get_move(player_color)
 
-    piece_position = get_new_position
-    piece_position = get_new_position until board[piece_position]
+    piece_position = get_new_position(player_color)
+    piece_position = get_new_position(player_color) until board[piece_position]
 
     piece = board[piece_position]
 
-    [piece, get_new_position] # the piece and where its moving to.
+    raise InvalidMoveError unless piece.color == player_color
+
+    destination = get_new_position(player_color)
+    self.moving_piece = nil
+
+    [piece, destination] # the piece and where its moving to.
   end
 
 end

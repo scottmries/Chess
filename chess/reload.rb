@@ -1,0 +1,6 @@
+load 'pieces.rb'
+load 'chess.rb'
+load 'interface.rb'
+load 'board.rb' 
+load 'cursorable.rb'
+load 'error_handling.rb'
