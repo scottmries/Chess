@@ -91,11 +91,8 @@ class Piece
     new_piece
   end
 
-  protected
 
   attr_writer :board
-
-  private
 
   attr_writer :position
 
@@ -157,8 +154,6 @@ module Castleable
   def has_moved?
     has_moved
   end
-
-  private
 
   attr_writer :has_moved
 
@@ -250,40 +245,26 @@ end
 
 class King < JumpingPiece
 
-  # include Castleable
+  include Castleable
 
   def initialize(board, color, position)
     super
     @rel_moves = Piece::DIAGONALS + Piece::NONDIAGONALS
     @has_moved = false
+
   end
 
-  def moves
-    moves = super
-    rank = self.position.first
+  def moves(castle_possible = true)
+    moves = super()
+    if castle_possible
+      moves << [rank, 2] if castle_left?
+      moves << [rank, 6] if castle_right?
+    end
+    moves
+  end
 
-    moves << [rank, 2] if castle_left?
-    moves << [rank, 6] if castle_right?
-
-    # unless has_moved
-    #
-    #   x,y = self.position
-    #   left_rook, right_rook = board[x,0], board[x,7]
-    #   checks? = []
-    #   empties?
-    #   caslte_moves []
-    #
-    #   if left_rook
-    #     unless left_rook.has_moved
-    #
-    #     end
-    #   end
-    #
-    #   if left_rook
-    #     unless left_rook.has_moved
-    #
-    #     end
-    #   end
+  def threatens
+    moves(false)
   end
 
   def left_rook
@@ -340,8 +321,9 @@ class King < JumpingPiece
   end
 
   def clear_path_and_no_check?(want_not_threatened, want_empty)
-    no_check = want_not_threatened.none? {}
-    clear_path = want_empty.all? {}
+    no_check = want_not_threatened.none? { |position| board.castle_threatened_to_check?(position, opponent_color)}
+    clear_path = want_empty.all?{ |position| board[position].nil?}
+
     no_check && clear_path
   end
 

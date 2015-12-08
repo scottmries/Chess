@@ -39,13 +39,29 @@ class Board
   end
 
   def threatened?(piece)
-    pieces(piece.opponent_color).each do |evil_piece|
-      evil_piece.threatens.each do |square|
-        return true if square == piece.position
+    threatened_position?(piece.position, piece.opponent_color)
+  end
+
+  def threatened_position?(position, evil_color)
+    pieces(evil_color).each do |evil_piece|
+      # byebug
+      threatened_positions = evil_piece.threatens
+      threatened_positions.each do |threatened_position|
+        return true if threatened_position == position
       end
     end
     false
   end
+
+    def castle_threatened_to_check?(position, evil_color)
+      pieces = pieces(evil_color).reject { |piece| piece.is_a?(King) && !piece.has_moved }
+      pieces.each_with_index do |evil_piece|
+        evil_piece.threatens.each do |threatened_position|
+          return true if threatened_position == position
+        end
+      end
+      false
+    end
 
   def the_king(color)
     piece_arr = pieces(color)
