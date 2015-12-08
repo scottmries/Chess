@@ -1,4 +1,5 @@
 require "io/console"
+require_relative "error_handling.rb"
 
 module Cursorable
   KEYMAP = {
@@ -45,8 +46,8 @@ module Cursorable
     when :left, :right, :up, :down
       update_pos(MOVES[key])
       nil
-    else
-      puts key
+    when :escape
+      raise QuitGame
     end
   end
 

@@ -1,6 +1,7 @@
 require 'colorize'
 require_relative 'board.rb'
 require_relative 'cursorable.rb'
+require_relative 'error_handling.rb'
 
 class Interface
 
@@ -54,13 +55,10 @@ class Interface
     puts display_grid
   end
 
-  def foo_for_now
+  def get_new_position
+    display until new_pos = get_input
 
-    until false
-      display
-      get_input
-    end
-
+    new_pos
   end
 
   def update_pos(diff)
@@ -68,8 +66,14 @@ class Interface
     @cursor_position = new_pos
   end
 
+  def get_move
 
+    piece_position = get_new_position
+    piece_position = get_new_position until board[piece_position]
 
+    piece = board[piece_position]
 
+    [piece, get_new_position] # the piece and where its moving to.
+  end
 
 end
