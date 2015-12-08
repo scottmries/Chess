@@ -36,6 +36,11 @@ class Board
     grid[x][y]
   end
 
+  def []=(pos, item)
+    x,y = pos
+    self.grid[x][y] = item
+  end
+
   # def inspect
   #   output = grid.map do |row|
   #     row.map {|square| square.first == :black ? "B" : "W"}.join
@@ -49,7 +54,7 @@ class Board
     nil
   end
 
-  private
+  protected
 
   attr_writer :grid
 end

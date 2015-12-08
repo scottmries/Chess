@@ -50,6 +50,18 @@ class Piece
     (self.color == :white) ? :black : :white
   end
 
+  def valid_moves
+    # check logic here
+    moves
+  end
+
+  def move_to(destination)
+    unless valid_moves.include?(destination)
+      raise InvalidMoveError
+    end
+    self.board[position], self.board[destination] = nil, self
+  end
+
   attr_writer :position
 
 end

@@ -9,3 +9,7 @@ class QuitGame < ChessError
   end
 
 end
+
+class InvalidMoveError < ChessError
+
+end
