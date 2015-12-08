@@ -208,17 +208,17 @@ end
 
 class Rook < SlidingPiece
 
-  # include Castleable
+  include Castleable
 
   def initialize(board, color, position)
     super
     @directions = Piece::NONDIAGONALS
-    # @has_moved = false
+    @has_moved = false
   end
 
-  # def castle(destination)
-  #   false
-  # end
+  def castle(destination)
+    false
+  end
 end
 
 class Knight < JumpingPiece
@@ -255,73 +255,73 @@ class King < JumpingPiece
   def initialize(board, color, position)
     super
     @rel_moves = Piece::DIAGONALS + Piece::NONDIAGONALS
-    # @has_moved = false
+    @has_moved = false
   end
 
-  # def moves
-  #   moves = super
-  #   rank = self.position.first
-  #
-  #   moves << [rank, 2] if castle_left?
-  #   moves << [rank, 6] if castle_right?
-  #
-  #   # unless has_moved
-  #   #
-  #   #   x,y = self.position
-  #   #   left_rook, right_rook = board[x,0], board[x,7]
-  #   #   checks? = []
-  #   #   empties?
-  #   #   caslte_moves []
-  #   #
-  #   #   if left_rook
-  #   #     unless left_rook.has_moved
-  #   #
-  #   #     end
-  #   #   end
-  #   #
-  #   #   if left_rook
-  #   #     unless left_rook.has_moved
-  #   #
-  #   #     end
-  #   #   end
-  # end
-  #
-  # def left_rook
-  #   x = position.first
-  #   board[[x, 0]]
-  # end
-  #
-  # def right_rook
-  #   x = position.first
-  #   board[[x, 7]]
-  # end
-  #
-  # def castle_left!
-  #
-  # end
-  #
-  # def castle_right!
-  #
-  # end
-  #
-  # def castle_left?
-  #   if left_rook.is_a?(Rook) && !left_rook.has_moved?
-  #
-  #   end
-  # end
-  #
-  # def castle_right?
-  #
-  # end
-  #
-  # def castle(destination)
-  #     unless has_moved
-  #       castle_left! if destination[1] == 2
-  #       castle_right! if destination[1] == 6
-  #     end
-  # end
-  #
-  #
-  #
+  def moves
+    moves = super
+    rank = self.position.first
+
+    moves << [rank, 2] if castle_left?
+    moves << [rank, 6] if castle_right?
+
+    # unless has_moved
+    #
+    #   x,y = self.position
+    #   left_rook, right_rook = board[x,0], board[x,7]
+    #   checks? = []
+    #   empties?
+    #   caslte_moves []
+    #
+    #   if left_rook
+    #     unless left_rook.has_moved
+    #
+    #     end
+    #   end
+    #
+    #   if left_rook
+    #     unless left_rook.has_moved
+    #
+    #     end
+    #   end
+  end
+
+  def left_rook
+    x = position.first
+    board[[x, 0]]
+  end
+
+  def right_rook
+    x = position.first
+    board[[x, 7]]
+  end
+
+  def castle_left!
+
+  end
+
+  def castle_right!
+
+  end
+
+  def castle_left?
+    if left_rook.is_a?(Rook) && !left_rook.has_moved?
+
+    end
+  end
+
+  def castle_right?
+
+  end
+
+  def castle(destination)
+      unless has_moved
+        castle_left! if destination[1] == 2
+        castle_right! if destination[1] == 6
+      end
+  end
+
+
+
 
 end
