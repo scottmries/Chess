@@ -287,31 +287,62 @@ class King < JumpingPiece
   end
 
   def left_rook
-    x = position.first
-    board[[x, 0]]
+    board[[rank, 0]]
   end
 
   def right_rook
-    x = position.first
-    board[[x, 7]]
+    board[[rank, 7]]
+  end
+
+  def rank
+    position.first
   end
 
   def castle_left!
-
+    king_pos = [rank, 2]
+    rook_pos = [rank, 3]
+    castle!(king_pos, rook_pos, left_rook)
   end
 
   def castle_right!
+    king_pos = [rank, 6]
+    rook_pos = [rank, 5]
+    castle!(king_pos, rook_pos, right_rook)
+  end
 
+  def castle!(king_pos, rook_pos, rook)
+    self.board[king_pos] = self
+    self.board[rook_pos] = rook
+    self.board[self.position] = nil
+    self.board[rook.position] = nil
+    rook.position = rook_pos
+    self.position = king_pos
+    self.has_moved = true
+    rook.has_moved = true
   end
 
   def castle_left?
     if left_rook.is_a?(Rook) && !left_rook.has_moved?
-
+      want_not_threatened = [[rank, 2], [rank, 3]]
+      want_empty = [[rank, 1], [rank, 2], [rank, 3]]
+      return clear_path_and_no_check?(want_not_threatened, want_empty)
     end
+    false
   end
 
   def castle_right?
+    if right_rook.is_a?(Rook) && !right_rook.has_moved?
+      want_not_threatened = [[rank, 5], [rank, 6]]
+      want_empty = want_not_threatened
+      return clear_path_and_no_check?(want_not_threatened, want_empty)
+    end
+    false
+  end
 
+  def clear_path_and_no_check?(want_not_threatened, want_empty)
+    no_check = want_not_threatened.none? {}
+    clear_path = want_empty.all? {}
+    no_check && clear_path
   end
 
   def castle(destination)
