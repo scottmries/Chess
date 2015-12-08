@@ -7,21 +7,27 @@ require_relative 'cursorable.rb'
 
 class ChessGame
 
-  attr_reader :board, :interface, :current_player
-  attr_writer :board, :interface, :current_player
+  attr_reader :board, :interface, :current_player, :checkmate, :stalemate
+  attr_writer :board, :interface, :current_player, :checkmate, :stalemate
 
   def initialize
     @board = Board.new
+    @board.populate_grid
     @interface = Interface.new(board)
     @current_player = :white
+    @checkmate = false
+    @stalemate = false
   end
 
   def play_game
-    while true
+    until checkmate || stalemate
       turn
+      self.checkmate = board.in_checkmate?(current_player)
+      self.stalemate = board.in_stalemate?(current_player)
     end
-  rescue QuitGame
-    puts "Bye Bye, quitter"
+    interface.display(current_player, true)
+    puts "Checkmate!\nThe game is over and #{current_player.to_s.capitalize} lost!" if checkmate
+    puts "It's a draw!" if stalemate
   end
 
   def switch_player

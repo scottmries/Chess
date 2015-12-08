@@ -47,7 +47,8 @@ module Cursorable
       update_pos(MOVES[key])
       nil
     when :escape
-      raise QuitGame
+      puts "Bye Bye, quitter!"
+      exit
     end
   end
 

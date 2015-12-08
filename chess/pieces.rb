@@ -51,18 +51,49 @@ class Piece
   end
 
   def valid_moves
-    # check logic here
-    moves
+    moves.reject { |move| subjunctive(move).in_check?(color) }
   end
 
   def move_to(destination)
     unless valid_moves.include?(destination)
       raise InvalidMoveError
     end
+    unsafe_move_to(destination)
+  end
+
+  def unsafe_move_to(destination)
     self.board[position] = nil
     self.board[destination] = self
     self.position = destination
   end
+
+  def threatens
+    moves
+  end
+
+  def subjunctive_moves
+    moves.map { |move| self.subjunctive(move) }
+  end
+
+  def subjunctive(move)
+    new_board = board.dup
+    new_board[self.position].unsafe_move_to(move)
+    new_board
+  end
+
+  def inspect
+    "#{self.color.to_s.capitalize} #{self.class.name} at #{self.position}"
+  end
+
+  def duplicate(board)
+    new_piece = self.dup
+    new_piece.board = board
+    new_piece
+  end
+
+  protected
+
+  attr_writer :board
 
   private
 
@@ -110,6 +141,30 @@ class JumpingPiece < Piece
 
 end
 
+#This assumes that the class has an instance variable has_moved that initializes to false.
+
+module Castleable
+
+  attr_reader :has_moved
+
+  def unsafe_move_to(destination)
+    unless castle(destination)
+      super
+      self.has_moved = true
+    end
+  end
+
+  def has_moved?
+    has_moved
+  end
+
+  private
+
+  attr_writer :has_moved
+
+end
+
+
 class Pawn < Piece
 
   def initialize(board, color, position)
@@ -121,9 +176,12 @@ class Pawn < Piece
     @has_moved
   end
 
+  def direction
+    self.color == :white ? -1 : 1
+  end
+
   def moves
     moves = []
-    direction = self.color == :white ? -1 : 1
 
     moves << vec_add(position, [direction, 0])
     unless has_moved?
@@ -142,14 +200,25 @@ class Pawn < Piece
     @has_moved = true
   end
 
+  def threatens
+    [vec_add(position, [direction, -1]), vec_add(position, [direction, 1])]
+  end
+
 end
 
 class Rook < SlidingPiece
 
+  # include Castleable
+
   def initialize(board, color, position)
     super
     @directions = Piece::NONDIAGONALS
+    # @has_moved = false
   end
+
+  # def castle(destination)
+  #   false
+  # end
 end
 
 class Knight < JumpingPiece
@@ -181,9 +250,78 @@ end
 
 class King < JumpingPiece
 
+  # include Castleable
+
   def initialize(board, color, position)
     super
     @rel_moves = Piece::DIAGONALS + Piece::NONDIAGONALS
+    # @has_moved = false
   end
+
+  # def moves
+  #   moves = super
+  #   rank = self.position.first
+  #
+  #   moves << [rank, 2] if castle_left?
+  #   moves << [rank, 6] if castle_right?
+  #
+  #   # unless has_moved
+  #   #
+  #   #   x,y = self.position
+  #   #   left_rook, right_rook = board[x,0], board[x,7]
+  #   #   checks? = []
+  #   #   empties?
+  #   #   caslte_moves []
+  #   #
+  #   #   if left_rook
+  #   #     unless left_rook.has_moved
+  #   #
+  #   #     end
+  #   #   end
+  #   #
+  #   #   if left_rook
+  #   #     unless left_rook.has_moved
+  #   #
+  #   #     end
+  #   #   end
+  # end
+  #
+  # def left_rook
+  #   x = position.first
+  #   board[[x, 0]]
+  # end
+  #
+  # def right_rook
+  #   x = position.first
+  #   board[[x, 7]]
+  # end
+  #
+  # def castle_left!
+  #
+  # end
+  #
+  # def castle_right!
+  #
+  # end
+  #
+  # def castle_left?
+  #   if left_rook.is_a?(Rook) && !left_rook.has_moved?
+  #
+  #   end
+  # end
+  #
+  # def castle_right?
+  #
+  # end
+  #
+  # def castle(destination)
+  #     unless has_moved
+  #       castle_left! if destination[1] == 2
+  #       castle_right! if destination[1] == 6
+  #     end
+  # end
+  #
+  #
+  #
 
 end

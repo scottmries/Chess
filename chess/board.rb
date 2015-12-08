@@ -4,17 +4,8 @@ class Board
 
   attr_reader :grid
 
-  def initialize
-    # [:square_color, :piece]
+  def initialize(grid = nil)
     @grid = Array.new(8) { Array.new(8) }
-
-    # grid.each_index do |row|
-    #   grid[row].each_index do |col|
-    #     (row + col) % 2 == 0 ? grid[row][col]= [:white, nil] : grid[row][col] = [:black, nil]
-    #   end
-    # end
-
-    populate_grid
   end
 
   def populate_grid
@@ -41,17 +32,67 @@ class Board
     self.grid[x][y] = item
   end
 
-  # def inspect
-  #   output = grid.map do |row|
-  #     row.map {|square| square.first == :black ? "B" : "W"}.join
-  #   end
-  #   puts output
-  # end
-
   def piece_color(pos)
     square_contents = self[pos]
     return square_contents.color if square_contents.is_a?(Piece)
     nil
+  end
+
+  def threatened?(piece)
+    pieces(piece.opponent_color).each do |evil_piece|
+      evil_piece.threatens.each do |square|
+        return true if square == piece.position
+      end
+    end
+    false
+  end
+
+  def the_king(color)
+    piece_arr = pieces(color)
+    piece_arr.find {|piece| piece.is_a?(King)}
+  end
+
+  def in_check?(color)
+    threatened?(the_king(color))
+  end
+
+  def pieces(color)
+    pieces = []
+    grid.each_with_index do |row, r_idx|
+      row.each_with_index do |square, c_idx|
+        pieces << square if square && square.color == color
+      end
+    end
+
+    pieces
+  end
+
+  def no_moves_left?(color)
+    parallel_universes = pieces(color).flat_map { |piece| piece.subjunctive_moves}
+    parallel_universes.all? { |universe| universe.in_check?(color)}
+  end
+
+  def in_stalemate?(color)
+    no_moves_left?(color) && !in_check?(color)
+  end
+
+  def in_checkmate?(color)
+    no_moves_left?(color) && in_check?(color)
+  end
+
+  def dup
+    new_board = Board.new
+
+    new_board.grid.each_with_index do |row, i|
+      row.each_index do |j|
+        if grid[i][j]
+          new_board[[i,j]] = grid[i][j].duplicate(new_board)
+        else new_board[[i,j]] = nil
+        end
+      end
+    end
+
+    new_board
   end
 
   protected

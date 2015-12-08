@@ -19,13 +19,13 @@ class Interface
   }
 
   PIECES_SYMBOLS = {
-    Pawn => " P  ",
-    Rook => " R  ",
-    Knight => " Kn ",
-    Bishop => " B  ",
-    Queen => " Q  ",
-    King => " K  ",
-    NilClass => "    "
+    Pawn => " #{"\u265F".encode('utf-8')} ",
+    Rook => " #{"\u265C".encode('utf-8')} ",
+    Knight => " #{"\u265E".encode('utf-8')} ",
+    Bishop => " #{"\u265D".encode('utf-8')} ",
+    Queen => " #{"\u265B".encode('utf-8')} ",
+    King => " #{"\u265A".encode('utf-8')} ",
+    NilClass => "   "
   }
 
   attr_reader :board, :cursor_position
@@ -37,7 +37,7 @@ class Interface
     @moving_piece = nil
   end
 
-  def display(player_color)
+  def display(player_color, game_over=false)
 
     display_grid = []
 
@@ -61,7 +61,10 @@ class Interface
     end
     system("clear")
     puts display_grid
-    puts "#{player_color.to_s.capitalize} to move."
+    unless game_over
+      puts "#{player_color.to_s.capitalize} to move."
+      puts "In Check!".blink if board.in_check?(player_color)
+    end
   end
 
   def get_new_position(player_color)
