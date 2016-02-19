@@ -44,7 +44,6 @@ class Board
 
   def threatened_position?(position, evil_color)
     pieces(evil_color).each do |evil_piece|
-      # byebug
       threatened_positions = evil_piece.threatens
       threatened_positions.each do |threatened_position|
         return true if threatened_position == position
