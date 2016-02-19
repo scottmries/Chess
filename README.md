@@ -1,3 +1,3 @@
 # Chess
 
-![http://github.com/scottmries/Chess/blob/master/chess.png](Screenshot)
+![https://github.com/scottmries/Chess/blob/master/chess.png?raw=true](Screenshot)
