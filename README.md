@@ -1,3 +1,3 @@
 # Chess
 
-![http://scottmries.com/img/chess.png](Screenshot)
+![Screenshot](http://scottmries.com/img/chess.png)
