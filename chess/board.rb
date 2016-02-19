@@ -2,7 +2,7 @@ require_relative 'pieces.rb'
 
 class Board
 
-  attr_reader :grid
+  attr_accessor :grid
 
   def initialize(grid = nil)
     @grid = Array.new(8) { Array.new(8) }
@@ -110,8 +110,4 @@ class Board
 
     new_board
   end
-
-  protected
-
-  attr_writer :grid
 end

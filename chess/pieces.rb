@@ -25,7 +25,8 @@ class Piece
     [-2,-1]
   ]
 
-  attr_reader :color, :board, :position
+  attr_reader :color
+  attr_accessor :board, :position
 
   def initialize(color, board, position)
     @board = board
@@ -91,11 +92,6 @@ class Piece
     new_piece
   end
 
-
-  attr_writer :board
-
-  attr_writer :position
-
 end
 
 
@@ -142,7 +138,7 @@ end
 
 module Castleable
 
-  attr_reader :has_moved
+  attr_accessor :has_moved
 
   def unsafe_move_to(destination)
     unless castle(destination)
@@ -154,8 +150,6 @@ module Castleable
   def has_moved?
     has_moved
   end
-
-  attr_writer :has_moved
 
 end
 
@@ -333,8 +327,4 @@ class King < JumpingPiece
         castle_right! if destination[1] == 6
       end
   end
-
-
-
-
 end

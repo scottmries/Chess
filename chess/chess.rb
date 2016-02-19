@@ -7,8 +7,7 @@ require_relative 'cursorable.rb'
 
 class ChessGame
 
-  attr_reader :board, :interface, :current_player, :checkmate, :stalemate
-  attr_writer :board, :interface, :current_player, :checkmate, :stalemate
+  attr_accessor :board, :interface, :current_player, :checkmate, :stalemate
 
   def initialize
     @board = Board.new
