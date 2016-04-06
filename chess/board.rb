@@ -9,14 +9,11 @@ class Board
   end
 
   def populate_grid
-    pieces = [Pawn, Rook, Knight, Bishop, Queen, King]
-    piece_columns = [(0..7), [0, 7], [1, 6], [2, 5], [3], [4]]
-    pieces.each_with_index do |piece, idx|
-      row_colors = [{row: (piece == Pawn ? 1 : 0), color: :black},
-        {row: (piece == Pawn ? 6 : 7), color: :white}]
-      row_colors.each do |row_color|
-        piece_columns[idx].each do |column|
-          self.grid[row_color[:row]][column] = piece.new(row_color[:color], self, [row_color[:row], column])
+    piece_kinds = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+    piece_kinds.each_with_index do |piece_kind, column_idx|
+      {black: {0: piece, 1: Pawn}, white: {7: piece, 6: Pawn}}.each do |color, row_type|
+        row_type.each do |row, type|
+          self.grid[row][column_idx] = type.new(color, self, [row, column_idx])
         end
       end
     end
